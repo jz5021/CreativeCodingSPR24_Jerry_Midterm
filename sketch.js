@@ -12,9 +12,10 @@ let tod = 0; //this will help functions and objects alter their looks depending 
 
 //Weather-based constructions
 let weather;
+let norm = 0;
+let cloudy = 1;
 
 //Clouds
-let cloudy = 1;
 let cloudsBackground = []; //Empty array to fill up for clouds in Background
 let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
@@ -67,11 +68,12 @@ function draw() {
         sky.display();
     }
 
-    //Background layer of clouds
+   //Background layer of clouds
     for (let cloud of cloudsBackground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
         cloud.display();
     }
+
 
     sceneSetup(); //Road
     buildingA.display();
@@ -79,11 +81,36 @@ function draw() {
     buildingC.display();
     //tree.display();
 
+
     for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
         cloud.display();
-    }
 
+    /* if (weather == norm){
+        for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
+            cloud.update();
+            cloud.display();
+        }
+    } else  */if (weather == cloudy){
+        if (cloudsBackground.length < 800){
+                let x = random(width); //where the cloud will spawn in the x
+                let y = random (0, 200); //where the cloud will spawn y axis, ensured to be in top half
+                let speed = random(.1,.3); //how fast the clouds are moving across the screen
+                let sizeX = random(30,55);
+                let sizeY = random (20,35);
+                let opacity = random (20, 90);
+                cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));
+                if (cloudsForeground.length < 100){
+                    for (let i = 0; i < 1; i ++){
+                    cloudsForeground.push(new Cloud(random(width),random(100,200), speed, sizeX, sizeY, opacity));
+                }
+                console.log(cloudsBackground.length)
+                    
+            }
+        }
+    }
+}
+    
     //This has to be kept separate from the main change in the sky because it needs to be able to cover the foreground
     if (tod == 0){
         sky.lighting();
@@ -105,6 +132,12 @@ function sceneSwitcher(){ //Made purely for managing what the weather status is
         } else {
             tod = 0;
         }
+    }
+
+    if (frameCount % 300 == 0){
+        weather = cloudy;
+    } else if (frameCount % 600 == 0){
+        weather = norm;
     }
     print(tod); //this is just to double check that this function is operating correctly
 }
@@ -261,11 +294,12 @@ class Cloud{
         }
     }
 
-    cloudy(){
-        x = 0;
+     moreClouds(){
+        let x = 0;
         fill(255,255,255,x);
-        
-        for(let i = 0; i<5; i ++);
+        for(let i = 0; i<10; i ++){
+            ellipse(this.x + i * 10, this.y, this.sizeX, this.sizeY);
+        }
 
         if (x < this.opacity){
             x += 1;
@@ -273,7 +307,7 @@ class Cloud{
             stop();
         }
    
-    }
+    } 
 }
 
 class Building{
