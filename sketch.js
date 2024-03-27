@@ -61,20 +61,20 @@ function setup() {
  }
 
 function draw() {
-    print(cloudsBackground.length);
     sceneSwitcher(); 
     if (tod == 0){
         sky.display();
+        sunAngle += .0087;
+        orbital();
     } else if (tod == 1){
         sky.night();
         sky.display();
     } else if (tod == 2){
         sky.day();
         sky.display();
+        sunAngle += .0087;
+        orbital();
     }
-
-    sunAngle += .01
-    orbital();
 
    //Background layer of clouds
     for (let cloud of cloudsBackground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
@@ -127,7 +127,7 @@ function draw() {
 
 function sceneSwitcher(){ //Made purely for managing what the weather status is
     //let ms = millis(); //this is what will dictate changes in the time, but this actually cannot be accessed BEFORE the setup because it requires the program to be running already (I think), originally wanted to use this for the time changes, but I feel more comforatble working with frame Count
-     if (frameCount % 300 == 0){  //it isn't possible to make this land on an exact zero because it doesn't refresh at the exact rate
+     if (frameCount % 360 == 0){  //it isn't possible to make this land on an exact zero because it doesn't refresh at the exact rate
         if (tod < 2){
             tod += 1;
         } else {
@@ -391,7 +391,7 @@ class Tree{
 function orbital(){
     push();
     fill(242, 235, 12);
-    translate(width/2,448);
+    translate(width/2,500);
     rotate(sunAngle);
     ellipse(-400,0,100);
     pop();
