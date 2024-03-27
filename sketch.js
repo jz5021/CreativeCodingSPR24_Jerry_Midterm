@@ -66,17 +66,15 @@ function setup() {
 function draw() {
     let elapsedTime = millis() - startTime;
 
-    let t = map(elapsedTime % loopDuration, 0, loopDuration, 0, 3000);
+    let t = map(elapsedTime % loopDuration, 0, loopDuration, 0, 3200);
 
     print(t);
     //Scene Switcher
-    if (t == 3000/*frameCount % 360 == 0*/){
-        if (tod < 2){
-            tod += 1;
+    if (t >= 3000/*frameCount % 360 == 0*/){
+            tod = 1;
         } else {
-            tod = 0;
+            tod = 2;
         }
-    }
 
     if (frameCount % 500 == 0){
         weather = cloudy;
