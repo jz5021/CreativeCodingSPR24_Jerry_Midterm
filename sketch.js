@@ -14,6 +14,7 @@ let day = true;
 let norm = 0;
 let cloudy = 1;
 let weather = norm;
+let rainy = false;
 
 
 //Clouds
@@ -59,6 +60,11 @@ function setup() {
 
 function draw() {
     sceneSwitcher(); 
+    
+    if (rainy){
+        rain();
+    }
+
     if (day){
         sky.day();
         sky.display();
@@ -82,6 +88,7 @@ function draw() {
         cloud.update();
         cloud.display();
     }
+
     sceneSetup(); //Road
     buildingA.display();
     buildingB.display();
@@ -109,9 +116,14 @@ function draw() {
                 let opacity = random (20, 90);
                 cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));    
         }
+
     }
 }
     
+    if (rainy){
+        rain();
+    }
+
     //This has to be kept separate from the main change in the sky because it needs to be able to cover the foreground
     if (day){
         sky.day();
@@ -123,19 +135,24 @@ function draw() {
 }
 
 function sceneSwitcher(){ //Made purely for managing what the weather status is
-    //let ms = millis(); //this is what will dictate changes in the time, but this actually cannot be accessed BEFORE the setup because it requires the program to be running already (I think), originally wanted to use this for the time changes, but I feel more comforatble working with frame Count
-    
-    let t = map(frameCount % duration, 0, 720, 0, 720);
+    let t = map(frameCount % duration, 0, 720, 0, 720); //the map makes sure that I can loop for frame count and not have to rely on millis() which doesn't give back whole numbers and not run into factors of both the orbital period and day/night cycle
     print(t);
     if (t % 360 == 0){
         day = !day;
     }
 
-    if (frameCount % 500 == 0){
+    if (frameCount % Math.floor(random(200,500)) == 0){
         weather = cloudy;
-    } else if (frameCount % 900 == 0){
+    } else if (frameCount % Math.floor(random(600,720)) == 0){ //to be honest I don't really know if the Math.floor(random(600,720)) is doing anything, but from my understanding it should be making the looping not as obvious
         weather = norm;
+        rainy = false;
     }
+
+    if (weather == cloudy){
+        if (frameCount % Math.floor(random(200,500)) == 0){
+            rainy = true;
+    }
+}
 }
 
 function sceneSetup(){ //builds the background
@@ -164,6 +181,7 @@ function sceneSetup(){ //builds the background
     }
 }
 
+//Sky-Based Entities
 class Sky{
     constructor(skyR, skyG, skyB, skyOpacity){
         this.skyR = skyR;
@@ -291,6 +309,42 @@ class Cloud{
     } 
 }
 
+function sun(){
+    push();
+    fill(242, 235, 12);
+    translate(width/2,500);
+    rotate(rotAngle);
+    ellipse(-400,0,100);
+    for (let i = 10; i < 500; i +=10){
+        fill(242, 235, 12, 255 - i*2.5);
+        ellipse(-400,0,100 +i);
+    }
+    pop();
+}
+
+function moon(){
+    push();
+    fill(255);
+    translate(width/2,500);
+    rotate(rotAngle);
+    ellipse(-400,0,40);
+    pop();
+}
+
+function rain(){
+    for (let i = 0; i < 50; i ++){
+        push();
+        let x = random(0, 1000);
+        let y = random(0,400);
+        let o = random (100,255);
+        translate(x,y);
+        fill(127, 189, 250,o)
+        rect(0,0,1,5)
+        pop();
+    }
+}
+
+//Terestrial-Based Entities
 class Building{
     constructor(xPos, yPos, height, width, color1){
         this.height = height;
@@ -369,24 +423,3 @@ class Tree{
     }
 }
 
-function sun(){
-    push();
-    fill(242, 235, 12);
-    translate(width/2,500);
-    rotate(rotAngle);
-    ellipse(-400,0,100);
-    for (let i = 10; i < 500; i +=10){
-        fill(242, 235, 12, 255 - i*2.5);
-        ellipse(-400,0,100 +i);
-    }
-    pop();
-}
-
-function moon(){
-    push();
-    fill(255);
-    translate(width/2,500);
-    rotate(rotAngle);
-    ellipse(-400,0,40);
-    pop();
-}
