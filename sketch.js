@@ -21,7 +21,7 @@ let cloudsBackground = []; //Empty array to fill up for clouds in Background
 let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
 
-let sunAngle = 0;
+let rotAngle = 0;
 let duration = 720;
 
 function setup() {
@@ -53,12 +53,8 @@ function setup() {
             let sizeY = random (60,75);
             let opacity = random (100, 200);
             cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));
-        }
-        
-        
+        }   
     }
-
-
  }
 
 function draw() {
@@ -66,17 +62,19 @@ function draw() {
     if (day){
         sky.day();
         sky.display();
-        if (sunAngle > (radians(180))){
-            sunAngle = 0
+        if (rotAngle > (radians(180))){
+            rotAngle = 0
         }
-        sunAngle += radians(.5);
-        orbital();
-    } else if (day == false){
+        rotAngle += radians(.5);
+        sun();
+    } else if (!day){
         sky.night();
         sky.display();
-    }   
-
-    
+        if (rotAngle > (radians(180))){
+            rotAngle = 0
+        }
+        moon();
+    } 
 
    //Background layer of clouds
     for (let cloud of cloudsBackground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
@@ -242,21 +240,6 @@ class Sky{
     }
 }
 
-/*class Lighting{
-    constructor(lightR, lightG, lightB, lightOpacity){
-        this.r = lightR;
-        this.g = lightG;
-        this.b = lightB;
-        this.o = lightOpacity;
-    }
-
-    //Works on the same theory as the sky positioning, but operates as an overlay through interactions with opacity, maybe I'll combine this into the Sky "class"
-    display(){
-        
-    }
-}
-*/
-
 class Cloud{
     constructor(x, y, speed, sizeX, sizeY, opacity){
         this.x = x;
@@ -385,11 +368,28 @@ class Tree{
     }
 }
 
-function orbital(){
+function sun(){
     push();
     fill(242, 235, 12);
     translate(width/2,500);
-    rotate(sunAngle);
+    rotate(rotAngle);
     ellipse(-400,0,100);
+    for (let i = 10; i < 500; i +=10){
+        fill(242, 235, 12, 255 - i*2.5);
+        ellipse(-400,0,100 +i);
+    }
+    pop();
+}
+
+function moon(){
+    push();
+    fill(220,220,220);
+    translate(width/2,500);
+    rotate(rotAngle);
+    ellipse(-400,0,75);
+    for (let i = 10; i < 400; i +=10){
+        fill(220,220,220, 255 - i*2.5);
+        ellipse(-400,0,100 +i);
+    }
     pop();
 }
