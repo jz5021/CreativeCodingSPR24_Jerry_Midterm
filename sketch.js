@@ -8,7 +8,7 @@ let brownstone = "#5f483c";
 //let blue = color(114, 147, 207); //I wanted to use this code in order to change the hex color, but it seems that I can't for some reason do this because it ends up klling my code
 
 //Global Variable
-let tod = 0; //this will help functions and objects alter their looks depending on the time using abbr. tod for "Time of Day"
+let day = true;
 
 //Weather-based constructions
 let norm = 0;
@@ -22,15 +22,13 @@ let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
 
 let sunAngle = 0;
-let startTime;
-let loopDuration = 3000;
+let duration = 720;
 
 function setup() {
-    frameRate(60);
-    startTime = millis();
-
     createCanvas(1000,600);
     
+    frameRate(60);
+
     buildingA = new Building(300, 300, 130, 148, tan); //buildings must have their bottoms at base level which is at 448 w/ origin at 0,0 top left
     buildingB = new Building(550, 278,120,170, brownstone);
     buildingC = new Building(800,320,120,128,asphalt);
@@ -64,36 +62,8 @@ function setup() {
  }
 
 function draw() {
-    let elapsedTime = millis() - startTime;
-
-    let t = map(elapsedTime % loopDuration, 0, loopDuration, 0, 3200);
-
-    print(t);
-    //Scene Switcher
-    if (t >= 3000/*frameCount % 360 == 0*/){
-            tod = 1;
-        } else {
-            tod = 2;
-        }
-
-    if (frameCount % 500 == 0){
-        weather = cloudy;
-    } else if (frameCount % 900 == 0){
-        weather = norm;
-    }
-
-
-    if (tod == 0){
-        sky.display();
-        if (sunAngle > (radians(180))){
-            sunAngle = 0
-        }
-        sunAngle += radians(.5);
-        orbital();
-    } else if (tod == 1){
-        sky.night();
-        sky.display();
-    } else if (tod == 2){
+    sceneSwitcher(); 
+    if (day){
         sky.day();
         sky.display();
         if (sunAngle > (radians(180))){
@@ -101,7 +71,10 @@ function draw() {
         }
         sunAngle += radians(.5);
         orbital();
-    }
+    } else if (day == false){
+        sky.night();
+        sky.display();
+    }   
 
     
 
@@ -135,26 +108,35 @@ function draw() {
                 let sizeX = random(30,55);
                 let sizeY = random (20,35);
                 let opacity = random (20, 90);
-                cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));     
+                cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));    
         }
     }
 }
     
     //This has to be kept separate from the main change in the sky because it needs to be able to cover the foreground
-    if (tod == 0){
-        sky.lighting();
-    } else if (tod == 1){
-        sky.night();
-        sky.lighting();
-    } else if (tod == 2){
+    if (day){
         sky.day();
         sky.lighting();
+    } else if (day == false){
+        sky.night();
+        sky.lighting();
     }
-
 }
 
 function sceneSwitcher(){ //Made purely for managing what the weather status is
+    //let ms = millis(); //this is what will dictate changes in the time, but this actually cannot be accessed BEFORE the setup because it requires the program to be running already (I think), originally wanted to use this for the time changes, but I feel more comforatble working with frame Count
+    
+    let t = map(frameCount % duration, 0, 720, 0, 720);
+    print(t);
+    if (t % 360 == 0){
+        day = !day;
+    }
 
+    if (frameCount % 500 == 0){
+        weather = cloudy;
+    } else if (frameCount % 900 == 0){
+        weather = norm;
+    }
 }
 
 function sceneSetup(){ //builds the background
