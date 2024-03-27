@@ -92,17 +92,9 @@ function draw() {
         for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
             cloud.update();
         }
-        if(cloudsBackground.length > 15){
-            cloudsBackground.splice(cloudsBackground.length,1);
+        if (cloudsBackground.length >15){
+            cloudsBackground.pop();
         }
-        /*let index = cloudsBackground.length;
-        let interval = setInterval(() => {
-        cloudsBackground.splice(index, 1); // Remove one cloud at the current index
-        index++; // Move to the next index
-        if (index >= cloudsForeground.length) {
-            clearInterval(interval); // Stop the interval when all clouds are removed
-        }
-    }, 100); // Adjust the delay between deletions */
     } else  if (weather == cloudy){
         if (cloudsBackground.length < 700){
                 let x = random(width); //where the cloud will spawn in the x
