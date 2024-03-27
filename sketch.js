@@ -20,6 +20,9 @@ let weather = norm;
 let cloudsBackground = []; //Empty array to fill up for clouds in Background
 let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
+
+let sunAngle = 0;
+
 function setup() {
     createCanvas(1000,600);
     
@@ -70,19 +73,19 @@ function draw() {
         sky.display();
     }
 
+    sunAngle += .01
+    orbital();
+
    //Background layer of clouds
     for (let cloud of cloudsBackground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
         cloud.display();
     }
-
-
     sceneSetup(); //Road
     buildingA.display();
     buildingB.display();
     buildingC.display();
     //tree.display();
-
 
     for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
@@ -96,7 +99,7 @@ function draw() {
             cloudsBackground.pop();
         }
     } else  if (weather == cloudy){
-        if (cloudsBackground.length < 700){
+        if (cloudsBackground.length < 500){
                 let x = random(width); //where the cloud will spawn in the x
                 let y = random (0, 200); //where the cloud will spawn y axis, ensured to be in top half
                 let speed = random(.1,.3); //how fast the clouds are moving across the screen
@@ -385,3 +388,11 @@ class Tree{
     }
 }
 
+function orbital(){
+    push();
+    fill(242, 235, 12);
+    translate(width/2,448);
+    rotate(sunAngle);
+    ellipse(-400,0,100);
+    pop();
+}
