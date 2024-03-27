@@ -70,9 +70,10 @@ function draw() {
     } else if (!day){
         sky.night();
         sky.display();
-        if (rotAngle > (radians(180))){
+        if (rotAngle > (radians(179))){
             rotAngle = 0
         }
+        rotAngle += radians(.5);
         moon();
     } 
 
@@ -383,13 +384,9 @@ function sun(){
 
 function moon(){
     push();
-    fill(220,220,220);
+    fill(255);
     translate(width/2,500);
     rotate(rotAngle);
-    ellipse(-400,0,75);
-    for (let i = 10; i < 400; i +=10){
-        fill(220,220,220, 255 - i*2.5);
-        ellipse(-400,0,100 +i);
-    }
+    ellipse(-400,0,40);
     pop();
 }
