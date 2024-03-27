@@ -22,12 +22,15 @@ let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
 
 let sunAngle = 0;
+let startTime;
+let loopDuration = 3000;
 
 function setup() {
+    frameRate(60);
+    startTime = millis();
+
     createCanvas(1000,600);
     
-    frameRate(60);
-
     buildingA = new Building(300, 300, 130, 148, tan); //buildings must have their bottoms at base level which is at 448 w/ origin at 0,0 top left
     buildingB = new Building(550, 278,120,170, brownstone);
     buildingC = new Building(800,320,120,128,asphalt);
@@ -61,10 +64,33 @@ function setup() {
  }
 
 function draw() {
-    sceneSwitcher(); 
+    let elapsedTime = millis() - startTime;
+
+    let t = map(elapsedTime % loopDuration, 0, loopDuration, 0, 3000);
+
+    print(t);
+    //Scene Switcher
+    if (t == 3000/*frameCount % 360 == 0*/){
+        if (tod < 2){
+            tod += 1;
+        } else {
+            tod = 0;
+        }
+    }
+
+    if (frameCount % 500 == 0){
+        weather = cloudy;
+    } else if (frameCount % 900 == 0){
+        weather = norm;
+    }
+
+
     if (tod == 0){
         sky.display();
-        sunAngle += .0087;
+        if (sunAngle > (radians(180))){
+            sunAngle = 0
+        }
+        sunAngle += radians(.5);
         orbital();
     } else if (tod == 1){
         sky.night();
@@ -72,9 +98,14 @@ function draw() {
     } else if (tod == 2){
         sky.day();
         sky.display();
-        sunAngle += .0087;
+        if (sunAngle > (radians(180))){
+            sunAngle = 0
+        }
+        sunAngle += radians(.5);
         orbital();
     }
+
+    
 
    //Background layer of clouds
     for (let cloud of cloudsBackground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
@@ -106,8 +137,7 @@ function draw() {
                 let sizeX = random(30,55);
                 let sizeY = random (20,35);
                 let opacity = random (20, 90);
-                cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));
-                console.log(cloudsBackground.length)      
+                cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));     
         }
     }
 }
@@ -126,20 +156,7 @@ function draw() {
 }
 
 function sceneSwitcher(){ //Made purely for managing what the weather status is
-    //let ms = millis(); //this is what will dictate changes in the time, but this actually cannot be accessed BEFORE the setup because it requires the program to be running already (I think), originally wanted to use this for the time changes, but I feel more comforatble working with frame Count
-     if (frameCount % 360 == 0){  //it isn't possible to make this land on an exact zero because it doesn't refresh at the exact rate
-        if (tod < 2){
-            tod += 1;
-        } else {
-            tod = 0;
-        }
-    }
 
-    if (frameCount % 500 == 0){
-        weather = cloudy;
-    } else if (frameCount % 900 == 0){
-        weather = norm;
-    }
 }
 
 function sceneSetup(){ //builds the background
