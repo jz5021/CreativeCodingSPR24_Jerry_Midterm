@@ -10,11 +10,23 @@ let brownstone = "#5f483c";
 //Global Variable
 let day = true;
 
+//Seasonal Variables
+let season;
+let spr = 1;
+let sum = 2;
+let fall = 3;
+let wint = 4;
+
 //Weather-based constructions
 let norm = 0;
 let cloudy = 1;
 let weather = norm;
-let rainy = false;
+
+//Additional Weather Additions
+let weatherAdditions;
+let none = 0;
+let rainy = 1;
+let snowy = 2;
 
 
 //Clouds
@@ -61,7 +73,7 @@ function setup() {
 function draw() {
     sceneSwitcher(); 
     
-    if (rainy){
+    if (weatherAdditions == rainy){
         rain();
     }
 
@@ -120,7 +132,7 @@ function draw() {
     }
 }
     
-    if (rainy){
+    if (weatherAdditions == rainy){
         rain();
     }
 
@@ -134,7 +146,14 @@ function draw() {
     }
 }
 
-function sceneSwitcher(){ //Made purely for managing what the weather status is
+function sceneSwitcher(){ //Made purely for managing what the weather status is based on season
+    
+    if (frameCount == 0){
+        season = summer;
+    }
+    
+    if (season == summer){
+
     let t = map(frameCount % duration, 0, 720, 0, 720); //the map makes sure that I can loop for frame count and not have to rely on millis() which doesn't give back whole numbers and not run into factors of both the orbital period and day/night cycle
     print(t);
     if (t % 360 == 0){
@@ -145,12 +164,13 @@ function sceneSwitcher(){ //Made purely for managing what the weather status is
         weather = cloudy;
     } else if (frameCount % Math.floor(random(600,720)) == 0){ //to be honest I don't really know if the Math.floor(random(600,720)) is doing anything, but from my understanding it should be making the looping not as obvious
         weather = norm;
-        rainy = false;
+        weatherAdditions = none;
     }
 
     if (weather == cloudy){
         if (frameCount % Math.floor(random(200,500)) == 0){
-            rainy = true;
+            weatherAdditions = rainy;
+        }
     }
 }
 }
@@ -335,11 +355,24 @@ function rain(){
     for (let i = 0; i < 50; i ++){
         push();
         let x = random(0, 1000);
-        let y = random(0,400);
+        let y = random(100,500);
         let o = random (100,255);
         translate(x,y);
         fill(127, 189, 250,o)
         rect(0,0,1,5)
+        pop();
+    }
+}
+
+function snow(){
+    for (let i = 0; i < 50; i ++){
+        push();
+        let x = random(0, 1000);
+        let y = random(100,500);
+        let o = random (100,255);
+        translate(x,y);
+        fill(255, 255, 255,o)
+        rect(0,0,1.5,1.5)
         pop();
     }
 }
