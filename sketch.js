@@ -5,17 +5,16 @@ let concrete = (165);
 let grout = (60);
 let tan = "#c2b18c";
 let brownstone = "#5f483c";
-//let blue = color(114, 147, 207); //I wanted to use this code in order to change the hex color, but it seems that I can't for some reason do this because it ends up klling my code
 
 //Global Variable
 let day = true;
 
-//Seasonal Variables
-let season;
-let spr = 1;
-let sum = 2;
-let fall = 3;
-let wint = 4;
+/*Seasonal Variables
+Only work with two seasons for now that are clearly differentiable, but more to be added if I can get to it
+Summer = 1
+Winter = 2
+*/
+let season = 1;
 
 //Weather-based constructions
 let norm = 0;
@@ -28,12 +27,11 @@ let none = 0;
 let rainy = 1;
 let snowy = 2;
 
-
 //Clouds
 let cloudsBackground = []; //Empty array to fill up for clouds in Background
 let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
-
+//Variables for Day/Night Cycle
 let rotAngle = 0;
 let duration = 720;
 
@@ -46,7 +44,7 @@ function setup() {
     buildingB = new Building(550, 278,120,170, brownstone);
     buildingC = new Building(800,320,120,128,asphalt);
     sky = new Sky(114, 147, 227, 0);
-    tree = new Tree(width / 2, height, 20, 100); // Create a tree object
+    tree = new Tree(100, 400, 10, 50); // Create a tree object
 
     //Creates clouds of random properties
     for (let i = 0; i <3; i ++){
@@ -71,10 +69,13 @@ function setup() {
  }
 
 function draw() {
+    print(season);
     sceneSwitcher(); 
     
     if (weatherAdditions == rainy){
         rain();
+    } else if (weatherAdditions == snowy){
+        snow();
     }
 
     if (day){
@@ -105,7 +106,7 @@ function draw() {
     buildingA.display();
     buildingB.display();
     buildingC.display();
-    //tree.display();
+    tree.display();
 
     for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
@@ -134,6 +135,8 @@ function draw() {
     
     if (weatherAdditions == rainy){
         rain();
+    } else if (weatherAdditions == snowy){
+        snow();
     }
 
     //This has to be kept separate from the main change in the sky because it needs to be able to cover the foreground
@@ -146,18 +149,23 @@ function draw() {
     }
 }
 
-function sceneSwitcher(){ //Made purely for managing what the weather status is based on season
+function sceneSwitcher(){ //Made for managing day/night cycle and what the weather status is based on season
     
-    if (frameCount == 0){
-        season = summer;
-    }
-    
-    if (season == summer){
-
+    //Day & Night Cycle [Kept Separate from Weather Functions]
     let t = map(frameCount % duration, 0, 720, 0, 720); //the map makes sure that I can loop for frame count and not have to rely on millis() which doesn't give back whole numbers and not run into factors of both the orbital period and day/night cycle
-    print(t);
     if (t % 360 == 0){
         day = !day;
+    }    
+
+    //Seasonal 
+    let s = map(frameCount % 3600, 0, 3600, 0, 3600);
+    if (s % 900 == 0){
+        if (season < 2){
+            season += 1;
+            weatherAdditions = none;
+        } else{
+            season = 1;
+        }
     }
 
     if (frameCount % Math.floor(random(200,500)) == 0){
@@ -165,14 +173,18 @@ function sceneSwitcher(){ //Made purely for managing what the weather status is 
     } else if (frameCount % Math.floor(random(600,720)) == 0){ //to be honest I don't really know if the Math.floor(random(600,720)) is doing anything, but from my understanding it should be making the looping not as obvious
         weather = norm;
         weatherAdditions = none;
-    }
-
+    }  
     if (weather == cloudy){
-        if (frameCount % Math.floor(random(200,500)) == 0){
+        if (season == 1){
+            if (frameCount % Math.floor(random(200,500)) == 0){
             weatherAdditions = rainy;
+                }
+        } else if (season == 2){
+            if (frameCount % Math.floor(random(200,500)) == 0){
+                weatherAdditions = snowy;
+                }
         }
     }
-}
 }
 
 function sceneSetup(){ //builds the background
@@ -426,33 +438,20 @@ class Tree{
     constructor(x, y, width, height){
         this.x = x;
         this.y = y;
-        this.width = width;
-        this.height = height;
-        this.leaves = []; //I think this works... an array to hold the leaves that I will be generating later on
-        this.makeLeaves(); //Calling the method here makes sure that the method doesn't need to be called again within the main draw() or setup() section
+        this.w = width;
+        this.h = height;
     }
 
-    //This is using the logic behind how I made the clouds (kind of)
-    makeLeaves(){
-        for(let i = 0; i < 50; i ++){ //I think I would make the leaves "die" later on based on the time that the program has been running
-            let x = random(this.x -50, this.x +50); //Random distance for the leaves from the trunk position "this.x"
-            let y = random(this.y - this.height, this.y - this.trunkHeight - 50); //this ensures that the leaves will be spawning "higher above the trunk"
-            let size = random(10,20); //Random size for the leaves 
-            let leaf = { x: x, y: y, size: size }; //Creation of another object
-            this.leaves.push(leaf); //This adds the leaf object created to the array
-        }
-    }
-    display() {
-        // Draw the trunk
-        fill(139, 69, 19); // Brown color for trunk
-        rectMode(CENTER);
-        rect(this.x, this.y, this.width, this.height);
-    
-        // Draw the leaves
-        fill(0, 128, 0); // Green color for leaves
-        for (let leaf of this.leaves) {
-          ellipse(leaf.x, leaf.y, leaf.size, leaf.size); // Draw each leaf
-        }
+    display(){
+        fill(20,15,1);
+        rect(this.x,this.y,this.w, this.h);
+        push();
+        stroke(20,15,1);
+        strokeWeight(5);
+        translate(this.x,this.y);
+        rotate(radians(-15));
+        line(0,0,20,0);
+        pop();
     }
 }
 
