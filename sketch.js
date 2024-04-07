@@ -31,6 +31,10 @@ let snowy = 2;
 let cloudsBackground = []; //Empty array to fill up for clouds in Background
 let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 
+//Leaves
+let leavesArray = [];//Empty array to fill up for leaves
+
+
 //Variables for Day/Night Cycle
 let rotAngle = 0;
 let duration = 720;
@@ -44,7 +48,16 @@ function setup() {
     buildingB = new Building(550, 278,120,170, brownstone);
     buildingC = new Building(800,320,120,128,asphalt);
     sky = new Sky(114, 147, 227, 0);
-    tree = new Tree(100, 400, 10, 50); // Create a tree object
+    
+    //Tree Creation
+    tree = new Tree(100, 400, 6, 50); // Create a tree object
+    for (let i = 0; i <200; i ++){
+        let x = random(75,125);
+        let y = random (335, 400);
+        let sizeX = random(10,25);
+        let sizeY = random (10,25);
+        leavesArray.push(new Leaf(x, y, sizeX, sizeY));
+    }
 
     //Creates clouds of random properties
     for (let i = 0; i <3; i ++){
@@ -66,6 +79,8 @@ function setup() {
             cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));
         }   
     }
+
+
  }
 
 function draw() {
@@ -107,6 +122,20 @@ function draw() {
     buildingB.display();
     buildingC.display();
     tree.display();
+/*     //Leaves
+    if (season == 1){
+        for (let i = 0; i <5; i ++){
+            let x = random(width);
+            let y = random (0, 200);
+            let sizeX = random(50,75);
+            let sizeY = random (60,75);
+            leavesArray.push(new Leaf(x, y, sizeX, sizeY));
+        }
+    } */
+
+    for(let leaf of leavesArray){
+        leaf.display();
+    }
 
     for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
@@ -445,13 +474,38 @@ class Tree{
     display(){
         fill(20,15,1);
         rect(this.x,this.y,this.w, this.h);
-        push();
-        stroke(20,15,1);
-        strokeWeight(5);
-        translate(this.x,this.y);
-        rotate(radians(-15));
-        line(0,0,20,0);
-        pop();
+        for (let i = 0; i < 5; i++){
+            push();
+            stroke(20,15,1);
+            strokeWeight(6-i);
+            strokeCap(SQUARE);
+            translate(this.x,this.y - (i*10));
+            rotate(radians(-15));
+            line(0,i,30 - i*2.5,0);
+            rotate(radians(-160));
+            line(0,i-5,30 - i*2.5,0);
+            pop();
+        }
     }
 }
 
+class Leaf{
+    constructor(x,y,sizeX,sizeY){
+        this.x = x;
+        this.y = y;
+        this.sizeX = sizeX;
+        this.sizeY = sizeY;
+    }
+
+    display(){
+        noStroke();
+        fill(1,20,3,60);
+        ellipse(this.x, this.y, this.sizeX, this.sizeY);
+    }
+
+    fall(){
+        for (let i = leavesArray.length; i == 0; i -= 1){
+            leavesArray
+        }
+    }
+}
