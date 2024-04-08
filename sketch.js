@@ -1,18 +1,27 @@
-//Colors
-let asphalt = (110);
-let paint = (210);
-let concrete = (165);
-let grout = (60);
+//Jerry Zhao_MidtermProject_Word:Temporary
+
+//Colors------------------------------------------------------------------
+let asphalt = 110;
+let paint = 210;
+let concrete = 165;
+let grout = 60;
 let tan = "#c2b18c";
 let brownstone = "#5f483c";
 
-//Global Variable
+
+//Environmental Variables-------------------------------------------------
+//Day/Night Cycle
 let day = true;
 
+//Sun&Moon rotational Numbers
+let rotAngle = 0;
+let duration = 720;
+
 /*Seasonal Variables
-Only work with two seasons for now that are clearly differentiable, but more to be added if I can get to it
 Summer = 1
-Winter = 2
+Fall = 2
+Winter = 3
+Spring = 4
 */
 let season = 1;
 
@@ -27,6 +36,7 @@ let none = 0;
 let rainy = 1;
 let snowy = 2;
 
+//Arrays--------------------------------------------------------------------
 //Clouds
 let cloudsBackground = []; //Empty array to fill up for clouds in Background
 let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
@@ -34,26 +44,41 @@ let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 //Leaves
 let leavesArray = [];//Empty array to fill up for leaves
 
-
-//Variables for Day/Night Cycle
-let rotAngle = 0;
-let duration = 720;
-
 function setup() {
     createCanvas(1000,600);
-    
     frameRate(60);
-
-    buildingA = new Building(300, 300, 130, 148, tan); //buildings must have their bottoms at base level which is at 448 w/ origin at 0,0 top left
-    buildingB = new Building(550, 278,120,170, brownstone);
-    buildingC = new Building(800,320,120,128,asphalt);
+    
+    //Sky
     sky = new Sky(114, 147, 227, 0);
     
+    //Buildings
+    buildingA = new Building(300, 300, 130, 148, tan);
+    buildingB = new Building(550, 278,120,170, brownstone);
+    buildingC = new Building(800,320,120,128,asphalt);
+    
     //Tree Creation
-    treeA = new Tree(100, 400, 6, 50); // Create a tree object
-
-    //Creates clouds of random properties
+    treeA = new Tree(100, 400, 6, 50); // Create a tree trunk
+    
+    //Leaf Initialization
+    if (leavesArray.length < 200){
+        for (let i = 0; i <200; i ++){
+        let x = random(75,125);
+        let y = random (335, 400);
+        let sizeX = random(10,25);
+        let sizeY = random (10,25);
+        let movement = random(.01,.1);
+        let leafR = random(1,50);
+        let leafG = random(20,100);
+        let leafB = random(3,28);
+        let leafO = random(60,150);
+        leavesArray.push(new Leaf(x, y, sizeX, sizeY, movement, leafR,leafG,leafB,leafO));
+    }
+    }
+    
+    //Clouds with random properties
     for (let i = 0; i <3; i ++){
+        
+        //Foreground Clouds
         let x = random(width); //where the cloud will spawn in the x
         let y = random (0, 200); //where the cloud will spawn y axis, ensured to be in top half
         let speed = random(.1,.5); //how fast the clouds are moving across the screen
@@ -61,7 +86,8 @@ function setup() {
         let sizeY = random (60,75);
         let opacity = random (100, 200);
         cloudsForeground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity))
-        
+    
+        //Background clouds
         for (let i = 0; i < 5; i ++){
             let x = random(width); //where the cloud will spawn in the x
             let y = random (0, 200); //where the cloud will spawn y axis, ensured to be in top half
@@ -72,20 +98,20 @@ function setup() {
             cloudsBackground.push(new Cloud(x, y, speed, sizeX, sizeY, opacity));
         }   
     }
-
-
  }
 
 function draw() {
     print(season);
     sceneSwitcher(); 
     
+    //Background
     if (weatherAdditions == rainy){
         rain();
     } else if (weatherAdditions == snowy){
         snow();
     }
 
+    //Sky Cycle
     if (day){
         sky.day();
         sky.display();
@@ -110,42 +136,63 @@ function draw() {
         cloud.display();
     }
 
-    sceneSetup(); //Road
+    sceneSetup();
     buildingA.display();
     buildingB.display();
     buildingC.display();
     treeA.display();
-/*     //Leaves
+
+    //Leaves
+    for(let leaf of leavesArray){
+        leaf.display();
+        leaf.update();
+    }
+
     if (season == 1){
-        for (let i = 0; i <5; i ++){
-            let x = random(width);
-            let y = random (0, 200);
-            let sizeX = random(50,75);
-            let sizeY = random (60,75);
-            leavesArray.push(new Leaf(x, y, sizeX, sizeY));
-        }
-    } */
-    if (season ==1){
         if (leavesArray.length < 200){
             for (let i = 0; i <200; i ++){
             let x = random(75,125);
             let y = random (335, 400);
             let sizeX = random(10,25);
             let sizeY = random (10,25);
-            let leafR = random(1,28);
-            let leafG = random(20,33);
+            let movement = random(.01,.1);
+            let leafR = random(1,50);
+            let leafG = random(20,100);
             let leafB = random(3,28);
             let leafO = random(60,150);
-            leavesArray.push(new Leaf(x, y, sizeX, sizeY, leafR,leafG,leafB,leafO));
+            leavesArray.push(new Leaf(x, y, sizeX, sizeY, movement, leafR,leafG,leafB,leafO));
+            }
+        }
+    } else if (season == 2){
+        for(let leaf of leavesArray){
+            leaf.fall();
+        }
+    } else if (season ==3){
+        if(leavesArray.length > 0){
+            leavesArray.pop();
+        }
+    } else if (season == 4){
+        if (leavesArray.length < 100){
+                for (let i = 0; i <200; i ++){
+                let x = random(75,125);
+                let y = random (335, 400);
+                let sizeX = random(1,5);
+                let sizeY = random (1,5);
+                let movement = random(.01,.1);
+                let leafR = random(1,50);
+                let leafG = random(10,200);
+                let leafB = random(20,38);
+                let leafO = random(60,150);
+                leavesArray.push(new Leaf(x, y, sizeX, sizeY, movement, leafR,leafG,leafB,leafO));
+            }
+        }
+
+        for(let leaf of leavesArray){
+            leaf.spring();
         }
     }
-        for(let leaf of leavesArray){
-            leaf.display();
-        }    
-    } else if (season ==2){
-        leavesArray.pop();
-    }
-
+    
+    //Foreground Clouds
     for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
         cloud.update();
         cloud.display();
@@ -169,7 +216,7 @@ function draw() {
         }
 
     }
-}
+    }
     
     if (weatherAdditions == rainy){
         rain();
@@ -198,7 +245,7 @@ function sceneSwitcher(){ //Made for managing day/night cycle and what the weath
     //Seasonal 
     let s = map(frameCount % 3600, 0, 3600, 0, 3600);
     if (s % 900 == 0){
-        if (season < 2){
+        if (season < 4){
             season += 1;
             weatherAdditions = none;
         } else{
@@ -216,11 +263,11 @@ function sceneSwitcher(){ //Made for managing day/night cycle and what the weath
         if (season == 1){
             if (frameCount % Math.floor(random(200,500)) == 0){
             weatherAdditions = rainy;
-                }
-        } else if (season == 2){
+            }
+        } else if (season == 3){
             if (frameCount % Math.floor(random(200,500)) == 0){
                 weatherAdditions = snowy;
-                }
+            }
         }
     }
 }
@@ -416,14 +463,20 @@ function rain(){
 
 function snow(){
     for (let i = 0; i < 50; i ++){
+        
+        //Actual Snow
         push();
         let x = random(0, 1000);
         let y = random(100,500);
         let o = random (100,255);
         translate(x,y);
-        fill(255, 255, 255,o)
-        rect(0,0,1.5,1.5)
+        fill(255, 255, 255,o);
+        rect(0,0,1.5,1.5);
         pop();
+
+        //Land Residual Snow
+        fill(255,255,255,o);
+        rect(width/2, 450, 1000, 2);
     }
 }
 
@@ -499,11 +552,12 @@ class Tree{
 }
 
 class Leaf{
-    constructor(x,y,sizeX,sizeY,leafR,leafG,leafB,leafO){
+    constructor(x,y,sizeX,sizeY,movement,leafR,leafG,leafB,leafO){
         this.x = x;
         this.y = y;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
+        this.m = movement;
         this.r = leafR;
         this.g = leafG;
         this.b = leafB;
@@ -514,5 +568,32 @@ class Leaf{
         noStroke();
         fill(this.r,this.g,this.b,this.o);
         ellipse(this.x, this.y, this.sizeX, this.sizeY);
+    }
+
+    update(){
+        this.x += cos(radians(frameCount))*this.m;
+    }
+
+    fall(){
+        if (this.r < 150){
+            this.r += 1;
+        }
+    }
+
+    spring(){
+        if (this.g > random(100,120)){
+            this.g -= 1;
+        }
+        if (this.b < random(20,30)){
+            this.b -= 1;
+        }
+
+        if (this.sizeX < random(10,25)){
+            this.sizeX += 1;
+        }
+
+        if (this.sizeY < random(10,25)){
+            this.sizeY += 1;
+        }
     }
 }
