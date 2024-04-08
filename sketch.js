@@ -50,14 +50,7 @@ function setup() {
     sky = new Sky(114, 147, 227, 0);
     
     //Tree Creation
-    tree = new Tree(100, 400, 6, 50); // Create a tree object
-    for (let i = 0; i <200; i ++){
-        let x = random(75,125);
-        let y = random (335, 400);
-        let sizeX = random(10,25);
-        let sizeY = random (10,25);
-        leavesArray.push(new Leaf(x, y, sizeX, sizeY));
-    }
+    treeA = new Tree(100, 400, 6, 50); // Create a tree object
 
     //Creates clouds of random properties
     for (let i = 0; i <3; i ++){
@@ -121,7 +114,7 @@ function draw() {
     buildingA.display();
     buildingB.display();
     buildingC.display();
-    tree.display();
+    treeA.display();
 /*     //Leaves
     if (season == 1){
         for (let i = 0; i <5; i ++){
@@ -132,9 +125,25 @@ function draw() {
             leavesArray.push(new Leaf(x, y, sizeX, sizeY));
         }
     } */
-
-    for(let leaf of leavesArray){
-        leaf.display();
+    if (season ==1){
+        if (leavesArray.length < 200){
+            for (let i = 0; i <200; i ++){
+            let x = random(75,125);
+            let y = random (335, 400);
+            let sizeX = random(10,25);
+            let sizeY = random (10,25);
+            let leafR = random(1,28);
+            let leafG = random(20,33);
+            let leafB = random(3,28);
+            let leafO = random(60,150);
+            leavesArray.push(new Leaf(x, y, sizeX, sizeY, leafR,leafG,leafB,leafO));
+        }
+    }
+        for(let leaf of leavesArray){
+            leaf.display();
+        }    
+    } else if (season ==2){
+        leavesArray.pop();
     }
 
     for (let cloud of cloudsForeground){ //Defines a variable for the array-based clouds in order to let them each update/display and iterates through them all
@@ -490,22 +499,20 @@ class Tree{
 }
 
 class Leaf{
-    constructor(x,y,sizeX,sizeY){
+    constructor(x,y,sizeX,sizeY,leafR,leafG,leafB,leafO){
         this.x = x;
         this.y = y;
         this.sizeX = sizeX;
         this.sizeY = sizeY;
+        this.r = leafR;
+        this.g = leafG;
+        this.b = leafB;
+        this.o = leafO;
     }
 
     display(){
         noStroke();
-        fill(1,20,3,60);
+        fill(this.r,this.g,this.b,this.o);
         ellipse(this.x, this.y, this.sizeX, this.sizeY);
-    }
-
-    fall(){
-        for (let i = leavesArray.length; i == 0; i -= 1){
-            leavesArray
-        }
     }
 }
