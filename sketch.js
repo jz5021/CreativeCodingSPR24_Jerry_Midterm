@@ -44,6 +44,9 @@ let cloudsForeground = []; //Empty array to fill up for clouds in Foreground
 //Leaves
 let leavesArray = [];//Empty array to fill up for leaves
 
+//Flowers
+let flowersArray = []; //Empty array to fill up for flowers
+
 function setup() {
     createCanvas(1000,600);
     frameRate(60);
@@ -75,8 +78,23 @@ function setup() {
     }
     }
 
-    //Flower Initialization
-    flowerA = new Flower(200,438,2,10,7,64,24,235,106,228,255);
+    //Flower Initialization - Random Flowers
+    for (let i = 0; i < 8; i ++){
+        let x = random(width);
+        let y = 442;
+        let sizeX = random(1.5,2);
+        let sizeY = random (8,10);
+        let stalkR = random(0,20);
+        let stalkG = 54;
+        let stalkB = random(16,29);
+        let flowerR = random(0,110);
+        let flowerG = random(0,110);
+        let flowerB = random(0,110);
+        let opacity = 255;
+        flowersArray.push(new Flower(x,y,sizeX,sizeY,stalkR,stalkG,stalkB,flowerR,flowerG,flowerB,opacity));
+    }
+
+//    flowerA = new Flower(200,438,2,10,7,64,24,235,106,228,255);
     
     //Clouds with random properties
     for (let i = 0; i <3; i ++){
@@ -144,12 +162,15 @@ function draw() {
     buildingB.display();
     buildingC.display();
     treeA.display();
-    flowerA.display();
 
     //Leaves and Flowers
     for(let leaf of leavesArray){
         leaf.display();
         leaf.update();
+    }
+
+    for(let flower of flowersArray){
+        flower.display();
     }
 
     if (season == 1){
@@ -171,10 +192,15 @@ function draw() {
         for(let leaf of leavesArray){
             leaf.fall();
         }
-        flowerA.fall();
+        for(let flower of flowersArray){
+            flower.fall();
+        }
     } else if (season == 3){
         if(leavesArray.length > 0){
             leavesArray.pop();
+        }
+        if(flowersArray.length>0){
+            flowersArray.pop();
         }
     } else if (season == 4){
         if (leavesArray.length < 100){
@@ -192,10 +218,26 @@ function draw() {
             }
         }
 
-        for(let leaf of leavesArray){
-            leaf.spring();
+        if (rainy){
+            for (let i = 0; i < 8; i ++){
+                let x = random(width);
+                let y = 442;
+                let sizeX = random(1.5,2);
+                let sizeY = random (8,10);
+                let stalkR = random(0,20);
+                let stalkG = 54;
+                let stalkB = random(16,29);
+                let flowerR = random(0,110);
+                let flowerG = random(0,110);
+                let flowerB = random(0,110);
+                let opacity = 0;
+                flowersArray.push(new Flower(x,y,sizeX,sizeY,stalkR,stalkG,stalkB,flowerR,flowerG,flowerB,opacity));
+            }
+
+            for(let leaf of leavesArray){
+                leaf.spring();
+            }
         }
-        flowerA.spring();
     }
     
     //Foreground Clouds
