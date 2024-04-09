@@ -146,7 +146,7 @@ function draw() {
     treeA.display();
     flowerA.display();
 
-    //Leaves
+    //Leaves and Flowers
     for(let leaf of leavesArray){
         leaf.display();
         leaf.update();
@@ -171,7 +171,8 @@ function draw() {
         for(let leaf of leavesArray){
             leaf.fall();
         }
-    } else if (season ==3){
+        flowerA.fall();
+    } else if (season == 3){
         if(leavesArray.length > 0){
             leavesArray.pop();
         }
@@ -194,6 +195,7 @@ function draw() {
         for(let leaf of leavesArray){
             leaf.spring();
         }
+        flowerA.spring();
     }
     
     //Foreground Clouds
@@ -618,13 +620,12 @@ class Flower{
     }
 
     display(){
-        
         //Stalk
         fill(this.sR,this.sG,this.sB,this.o);
         rect(this.x,this.y,this.w,this.h);
 
         //Flower
-        fill(227,222,75);
+        fill(227,222,75,this.o);
         ellipse(this.x, this.y-this.h, this.w*3);
         
         fill(this.fR,this.fG,this.fB,this.o);
@@ -635,7 +636,17 @@ class Flower{
             ellipse(this.w*3,0,7,1);
         }
         pop();
+    }
 
-        
+    fall(){
+        if (this.o > 0){
+            this.o -=2;
+        }
+    }
+
+    spring(){
+        if (this.o < 255){
+            this.o += 2;
+        }
     }
 }
