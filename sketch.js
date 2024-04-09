@@ -8,7 +8,6 @@ let grout = 60;
 let tan = "#c2b18c";
 let brownstone = "#5f483c";
 
-
 //Environmental Variables-------------------------------------------------
 //Day/Night Cycle
 let day = true;
@@ -298,7 +297,7 @@ function sceneSwitcher(){ //Made for managing day/night cycle and what the weath
         weatherAdditions = none;
     }  
     if (weather == cloudy){
-        if (season == 1){
+        if (season == 1, season == 2, season == 4){
             if (frameCount % Math.floor(random(200,500)) == 0){
             weatherAdditions = rainy;
             }
