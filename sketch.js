@@ -122,7 +122,6 @@ function setup() {
  }
 
 function draw() {
-    print(season);
     sceneSwitcher(); 
     
     //Background
@@ -188,6 +187,11 @@ function draw() {
             leavesArray.push(new Leaf(x, y, sizeX, sizeY, movement, leafR,leafG,leafB,leafO));
             }
         }
+        if (weatherAdditions == rainy){
+            for(let flower of flowersArray){
+                flower.spring();
+            }
+        }
     } else if (season == 2){
         for(let leaf of leavesArray){
             leaf.fall();
@@ -198,9 +202,6 @@ function draw() {
     } else if (season == 3){
         if(leavesArray.length > 0){
             leavesArray.pop();
-        }
-        if(flowersArray.length>0){
-            flowersArray.pop();
         }
     } else if (season == 4){
         if (leavesArray.length < 100){
@@ -217,25 +218,14 @@ function draw() {
                 leavesArray.push(new Leaf(x, y, sizeX, sizeY, movement, leafR,leafG,leafB,leafO));
             }
         }
+        
+        for(let leaf of leavesArray){
+            leaf.spring();
+        }
 
-        if (rainy){
-            for (let i = 0; i < 8; i ++){
-                let x = random(width);
-                let y = 442;
-                let sizeX = random(1.5,2);
-                let sizeY = random (8,10);
-                let stalkR = random(0,20);
-                let stalkG = 54;
-                let stalkB = random(16,29);
-                let flowerR = random(0,110);
-                let flowerG = random(0,110);
-                let flowerB = random(0,110);
-                let opacity = 0;
-                flowersArray.push(new Flower(x,y,sizeX,sizeY,stalkR,stalkG,stalkB,flowerR,flowerG,flowerB,opacity));
-            }
-
-            for(let leaf of leavesArray){
-                leaf.spring();
+        if (weatherAdditions == rainy){
+            for(let flower of flowersArray){
+                flower.spring();
             }
         }
     }
