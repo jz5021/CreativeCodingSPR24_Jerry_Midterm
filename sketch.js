@@ -74,6 +74,9 @@ function setup() {
         leavesArray.push(new Leaf(x, y, sizeX, sizeY, movement, leafR,leafG,leafB,leafO));
     }
     }
+
+    //Flower Initialization
+    flowerA = new Flower(200,438,2,10,7,64,24,235,106,228,255);
     
     //Clouds with random properties
     for (let i = 0; i <3; i ++){
@@ -141,6 +144,7 @@ function draw() {
     buildingB.display();
     buildingC.display();
     treeA.display();
+    flowerA.display();
 
     //Leaves
     for(let leaf of leavesArray){
@@ -595,5 +599,43 @@ class Leaf{
         if (this.sizeY < random(10,25)){
             this.sizeY += 1;
         }
+    }
+}
+
+class Flower{
+    constructor(x,y,width,height,stalkR,stalkG,stalkB,flowerR,flowerG,flowerB,opacity){
+        this.x = x;
+        this.y = y;
+        this.w = width;
+        this.h = height;
+        this.sR = stalkR;
+        this.sG = stalkG;
+        this.sB = stalkB;
+        this.fR = flowerR;
+        this.fG = flowerG;
+        this.fB = flowerB;
+        this.o = opacity
+    }
+
+    display(){
+        
+        //Stalk
+        fill(this.sR,this.sG,this.sB,this.o);
+        rect(this.x,this.y,this.w,this.h);
+
+        //Flower
+        fill(227,222,75);
+        ellipse(this.x, this.y-this.h, this.w*3);
+        
+        fill(this.fR,this.fG,this.fB,this.o);
+        push();
+        translate(this.x,this.y-this.h);
+        for (let i = 0; i <= 360; i ++){
+            rotate(i);
+            ellipse(this.w*3,0,7,1);
+        }
+        pop();
+
+        
     }
 }
